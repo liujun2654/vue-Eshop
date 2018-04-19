@@ -1,7 +1,7 @@
 <template>
   <!--E秒商品预告-->
   <div class="advance">
-    <img :src="url" alt="">
+    <img v-lazy="url" alt="">
   </div>
 </template>
 

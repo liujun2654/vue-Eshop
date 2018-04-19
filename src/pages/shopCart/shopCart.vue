@@ -74,16 +74,16 @@
           color #a7a5aa
 
     .shopWrap
-      margin-top 60px
+      margin-top 50px
       .nav_hide
-        height 50px
+        height 60px
         list-style none
         display flex
         flex-direction row
         justify-content space-around
         border-bottom 1px solid #758283
-        padding-bottom 10px
         overflow hidden
+        align-items: center;
         &.slide-enter-active,&.slide-leave-active
           transition all 0.5s linear
         &.slide-enter,&.slide-leave-to

@@ -21,36 +21,41 @@
       </div>
     </header>
     <div class="content">
+      <!--用户名密码登录-->
       <div class="content_login" v-if="isShow">
         <div>
           <span class="iconfont icon-tubiao211"></span>
-          <input type="text" name="username" v-model="username" placeholder="手机号/邮箱/用户名">
+          <input type="text" name="name" v-model="name" placeholder="手机号/邮箱/用户名">
         </div>
         <div>
           <span class="iconfont icon-mima"></span>
           <input type="password" name="pwd" v-model="pwd" placeholder="输入密码">
         </div>
       </div>
+      <!--手机验证码登录-->
       <div class="content_login" v-if="!isShow">
         <div>
           <span class="iconfont icon-tubiao211"></span>
-          <input type="text" name="phone" v-model="phone" placeholder="已注册的手机号">
+          <input type="text" name="phone" maxlength="11" v-model="phone" placeholder="已注册的手机号">
         </div>
         <div>
           <span class="iconfont icon-mima"></span>
-          <input type="text" name="imgtext" v-model="imgtext" placeholder="请输入图片内容">
-          <img src="http://localhost:3000/captcha" alt="">
+          <input type="text" name="captcha" v-model="captcha" placeholder="请输入图片内容">
+          <img src="http://localhost:3000/captcha" alt="" @click="updateCaptcha">
         </div>
         <div>
           <span class="iconfont icon-mima"></span>
           <input type="text" name="dynamicPwd" v-model="dynamicPwd" placeholder="动态密码">
-          <button>获取动态密码</button>
+          <button :disabled="computeTime>0 || !rightPhone"
+                  class="get_verification" :class="{right_phone_number:computeTime===0&&rightPhone}"
+                  @click.prevent="sendCode">
+            {{computeTime ? `已发送(${computeTime}s)` : '获取验证码'}}</button>
         </div>
       </div>
       <div class="text">
         <span>忘记密码？</span>
       </div>
-      <div class="login">
+      <div class="login1" @click="onLogin">
         <span>登录</span>
       </div>
       <div class="other_login">
@@ -67,20 +72,113 @@
         </div>
       </div>
     </div>
+    <AlertTip :alertText="alertText" @closeTip="closeTip" v-if="isShowAlert"></AlertTip>
   </div>
 </template>
 
 <script>
+  import AlertTip from '../../components/AlertTip/AlertTip.vue'
+  import {loginPwd,sendCode,loginSms} from '../../api'
   export default {
     data(){
       return{
         isShow:true,
-        username:'',
-        pwd:'',
-        phone:'',
-        imgtext:'',
-        dynamicPwd:''
+        name:'',//用户名
+        pwd:'',//密码
+        phone:'',//手机号
+        captcha:'',//图形验证码
+        dynamicPwd:'',//短信验证吗
+        computeTime: 0, // 倒计时的时间
+        isShowAlert:false,
+        alertText:''
       }
+    },
+    computed:{
+      rightPhone(){
+        return /^1\d{10}$/.test(this.phone)
+      }
+    },
+    methods:{
+      async sendCode(){
+        this.computeTime = 30;
+        const intervalId = setInterval(()=>{
+          this.computeTime--
+          if(this.computeTime===0){
+            clearInterval(intervalId)
+          }
+        },1000)
+        //发送请求，获取验证码
+        const result = await sendCode(this.phone)
+        if(result.code===1){
+          //验证码错误
+          this.showAlert(result.msg);
+          //清除定时器
+          clearInterval(intervalId);
+          this.computeTime = 0
+        }
+      },
+      //点击按钮登录
+      async onLogin(){
+        let result;
+        if(this.isShow){//用户名密码登录
+          console.log('用户名密码登录');
+          let {name,pwd} = this;
+          let {showAlert} = this
+          if(!name){
+            //用户名不能为空
+            showAlert('用户名不能为空')
+            return
+          }else if(!pwd){
+            //密码不能为空
+            showAlert('密码不能为空')
+            return
+          }
+          result = await loginPwd({name,pwd})
+        }else {//短信验证码登录
+          console.log('短信验证码登录');
+          let {phone,captcha,dynamicPwd,showAlert} = this
+          if(!/^1\d{10}$/.test(phone)){
+            //手机号输入不正确
+            showAlert('手机号输入不正确')
+            return
+          }else if(!captcha){
+            //图文验证码不正确
+            showAlert('验证码不正确')
+            return
+          }else if(!/^\d{6}$/.test(dynamicPwd)){
+            //短信验证码不正确
+            showAlert('短信验证码不正确')
+            return
+          }
+          result = await loginSms({phone,captcha,dynamicPwd})
+        }
+
+        //发送请求、拿到的数据进行判断是否成功或失败
+        if(result===1){
+          //失败
+          this.showAlert(result.msg)
+        }else {
+          //成功
+          const user = result.data;
+          this.$store.dispatch('saveUserInfo',user)
+          this.showAlert('登录成功')
+        }
+      },
+      showAlert(text){
+        this.alertText = text;
+        this.isShowAlert = true;
+      },
+      closeTip(){
+        this.alertText = '';
+        this.isShowAlert = false;
+      },
+      //更新图文验证码
+      updateCaptcha(event){
+        event.target.src = 'http://localhost:3000/captcha?time='+Date.now()
+      }
+    },
+    components:{
+      AlertTip
     }
   }
 </script>
@@ -180,14 +278,19 @@
           display block
           width 100px
           height 30px
-          border 1px solid #ff4259
+          border 1px solid #cfcfcf
           box-sizing border-box
           line-height 28px
           border-radius 5px
           font-size 12px
           text-align center
-          color #ff4259
           background white
+
+        &.get_verification
+          color #ccc
+          background transparent
+        &.right_phone_number
+          color:black
     .text
       position relative
       height 20px
@@ -198,7 +301,7 @@
         font-size 14px
         padding 3px 0
         color: #898989;
-    .login
+    .login1
       background #2ec975
       margin-top 4px
       border-radius 5px

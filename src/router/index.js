@@ -5,8 +5,10 @@ import home from '../pages/home/home.vue'
 import classify from '../pages/classify/classify.vue'
 import shopCart from '../pages/shopCart/shopCart.vue'
 import myPet from '../pages/myPet/myPet.vue'
-import classSort from '../pages/classSort/classSort.vue'
-import brand from '../pages/brand/brand.vue'
+import classSort from '../pages/classify/classSort/classSort.vue'
+import brand from '../pages/classify/brand/brand.vue'
+import brandlist from '../pages/classify/brand/brandlist/brandlist.vue'
+
 
 
 Vue.use(VueRouter);
@@ -54,6 +56,10 @@ export default new VueRouter({
     {
       path:'/mypet',
       component:myPet
+    },
+    {
+      path:'/classify/brand/list',
+      component:brandlist
     },
     {
       path:'/',

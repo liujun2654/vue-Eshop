@@ -11,7 +11,7 @@
             <li class="fl" v-for="(lis,index) in brd.list" :key="index">
               <a href="javascript:;" class="block">
                 <div class="img loadimg-nofixed rela">
-                  <img class="db image" :src="lis.logo">
+                  <img class="db image" v-lazy="lis.logo">
                 </div>
                 <p class="name">{{lis.name}}</p>
                 <p class="address">{{lis.address}}</p>
@@ -22,6 +22,17 @@
       </div>
 
     </div>
+    <!--全部品牌-->
+    <div class="brand_all" @click="$router.push('/classify/brand/list')">
+      <a href="javascript:;">
+        全部
+      </a>
+    </div>
+    <!--loading-->
+    <div class="login" v-if="isShowLogin">
+      <img src="./imgs/loading.gif" alt="">
+      <p>数据加载中</p>
+    </div>
   </div>
 </template>
 
@@ -30,14 +41,25 @@
   import {mapState} from 'vuex'
 
   export default {
+    data(){
+      return{
+        isShowLogin:true
+      }
+    },
     computed:{
       ...mapState(['brand'])
+    },
+    watch:{
+      brand(value){
+        this.isShowLogin=false
+      }
     },
     mounted(){
       this.$store.dispatch('getBrand',()=>{
         this.$nextTick(()=>{
           new BScroll('.bandsbox',{
-            bounce:false
+            bounce:false,
+            click:true
           })
         })
       })
@@ -124,4 +146,37 @@
                   color: #999;
                   text-align: center;
                   display: block;
+    .brand_all
+      position fixed
+      right 0px
+      bottom 100px
+      background: rgba(0,0,0,.4);
+      height 40px
+      width 40px
+      border-radius 50%
+      a
+        display block
+        width 100%
+        height 100%
+        font-size 12px
+        text-align center
+        line-height 40px
+        color #fff
+        border-radius 50%
+    .login
+      position absolute
+      top 0
+      left 0
+      bottom 0
+      right 0
+      margin auto
+      height 100px
+      width 100px
+      background rgba(89,89,89,1)
+      text-align center
+      img
+        width 40%
+        margin 20px 0 10px 0
+      p
+        color #282828
 </style>

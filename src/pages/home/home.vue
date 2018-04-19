@@ -15,7 +15,7 @@
               <li class="fl" style="width: 20%; height: 90px;"
                   v-for="(ColumnMenu,index) in homeDatas[1].menus">
                 <a href="javascript:;">
-                  <img :src="ColumnMenu.image">
+                  <img v-lazy="ColumnMenu.image">
                 </a>
               </li>
             </ul>
@@ -115,6 +115,12 @@
       </div>
 
     </div>
+
+    <!--loading-->
+    <div class="login" v-if="isShowLogin">
+      <img src="./imgs/loading.gif" alt="">
+      <p>数据加载中</p>
+    </div>
   </div>
 </template>
 
@@ -134,7 +140,8 @@
   export default {
     data(){
       return{
-        isOn:true
+        isOn:true,
+        isShowLogin:true
       }
     },
     computed:{
@@ -164,6 +171,11 @@
     methods:{
       isOnOff(){
         this.isOn = false
+      }
+    },
+    watch:{
+      homeDatas(value){
+        this.isShowLogin=false
       }
     },
     components:{
@@ -326,4 +338,20 @@
         font-size 12px
         text-align center
 
+  .login
+    position absolute
+    top 0
+    left 0
+    bottom 0
+    right 0
+    margin auto
+    height 100px
+    width 100px
+    background rgba(89,89,89,1)
+    text-align center
+    img
+      width 40%
+      margin 20px 0 10px 0
+    p
+      color #282828
 </style>
