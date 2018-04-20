@@ -1,21 +1,23 @@
 <template>
   <div>
     <header>
-      <div class="head_top">
-        <span class="top_left iconfont icon-iconfontjiantou7" @click="$router.back()"></span>
-        <span class="top_right">注册</span>
-      </div>
-      <div class="head_bottom">
-        <div class="bottom_left" @click.stop="isShow=true">
-          <a href="javascript:;">普通登录</a>
-          <div class="bottom_icon" v-if="isShow">
-            <span class="iconfont icon-triangle-up"></span>
-          </div>
+      <div class="head_wrap">
+        <div class="head_top">
+          <span class="top_left iconfont icon-iconfontjiantou7" @click="$router.back()"></span>
+          <span class="top_right">注册</span>
         </div>
-        <div class="bottom_right" @click.stop="isShow=false">
-          <a href="javascript:;">手机动态密码登录</a>
-          <div class="bottom_icon" v-if="!isShow">
-            <span class="iconfont icon-triangle-up"></span>
+        <div class="head_bottom">
+          <div class="bottom_left" @click.stop="isShow=true">
+            <a href="javascript:;">普通登录</a>
+            <div class="bottom_icon" v-if="isShow">
+              <span class="iconfont icon-triangle-up"></span>
+            </div>
+          </div>
+          <div class="bottom_right" @click.stop="isShow=false">
+            <a href="javascript:;">手机动态密码登录</a>
+            <div class="bottom_icon" v-if="!isShow">
+              <span class="iconfont icon-triangle-up"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -184,7 +186,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  header
+  .head_wrap
     background-image url("./ef42dfb164982f302e78ca327b9d306c.png")
     background-repeat no-repeat
     background-size 100% 100%

@@ -34,9 +34,10 @@
       </div>
       <nav class="navWrap">
         <ul class="navList">
-          <li :class="{active:menu.menu_id==1}" v-for="(menu,index) in homeMenus" :key="index">
+          <li :class="{active:index1==index}" v-for="(menu,index) in homeMenus"
+              @click="isSelect(index)" :key="index">
             <a href="javascript:;">{{menu.menu_name}}</a>
-            <i :class="{active:menu.menu_id==1}"></i>
+            <i :class="{active:index1==index}"></i>
           </li>
         </ul>
       </nav>
@@ -53,7 +54,8 @@
     },
     data(){
       return{
-        isHide:true
+        isHide:true,
+        index1:0
       }
     },
     computed:{
@@ -62,7 +64,8 @@
     mounted(){
       this.$nextTick(()=>{
         new BScroll('.navWrap',{
-          scrollX:true
+          scrollX:true,
+          click:true
         })
       })
     },
@@ -70,6 +73,9 @@
       isShow(){
         this.isHide = false;
         this.isOnOff();
+      },
+      isSelect(index){
+        this.index1 = index
       }
     }
   }

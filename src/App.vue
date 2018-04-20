@@ -1,6 +1,9 @@
 <template>
   <div style="height: 100%;">
-    <router-view></router-view>
+
+      <router-view/>
+
+
     <FootGuide v-if="$route.meta.showFooter"/>
   </div>
 </template>

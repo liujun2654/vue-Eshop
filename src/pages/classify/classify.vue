@@ -18,8 +18,10 @@
 
       </div>
     </div>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
 
-    <router-view></router-view>
   </div>
 </template>
 

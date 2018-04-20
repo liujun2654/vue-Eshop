@@ -56,7 +56,7 @@
         justify-content space-around
         color #666666
         &.on
-          color #9acd75
+          color #468c13
         p
           font-size 14px
 
